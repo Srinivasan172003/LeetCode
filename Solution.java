@@ -1,30 +1,22 @@
-package leetCodePalindrome;
-
 public class Solution {
-	
-	    private static boolean checkPalindrome(String num){
-	            int left =0;
-	            int right = num.length() - 1;
-	            while(left < right){
-	                if(num.charAt(left) != num.charAt(right)){
-	                    return false;       
-	                }
-	                left ++;
-	                right --;
+    public List<Integer> lexicalOrder(int n) {
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 1; i < 10; i++) {
+            dfs(i, n, ans);
+        }
+        return ans;
+    }
 
-	            }
-	            return true;
-	    }
-	    public boolean isPalindrome(int x) {
-	        if(x<0){
-	            return false;
-	        }
-	        
-	        
-	        String num = x + "";
-	        //CHANGING INT TO STRING 
-	        return checkPalindrome(num);
-	    }
-	}
-
-
+    private void dfs(int curr, int n, List<Integer> ans) {
+        if (curr > n) {
+            return;
+        }
+        ans.add(curr);
+        for (int i = 0; i < 10; i++) {
+            if (10 * curr + i > n) {
+                return;
+            }
+            dfs(10 * curr + i, n, ans);
+        }
+    }
+}
