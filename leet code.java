@@ -1,32 +1,17 @@
-|class Solution {
-public:
-    typedef long long ll;
-    int countPairs(vector<int> nums, int diff) {
-        int i = 0, cnt = 0, n = nums.size();
-        while (i < n-1) {
-            if (nums[i+1] - nums[i] <= diff) {
-                cnt++;
-                i++; 
-            }
-            i++;
-        }
-        return cnt;
-    }
-    int minimizeMax(vector<int>& nums, int p) {
-        int n = nums.size();
-        sort(nums.begin(), nums.end());
-        int low = 0, high = (nums[n - 1] - nums[0]);
-        int ans=0;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
-            int cnt = countPairs(nums, mid);
-            if (cnt >= p) {
-                high = mid-1;
-                ans = mid;
+class Solution {
+    public int maximumDifference(int[] nums) {
+        int n = nums.length;
+        int minElement = nums[0];
+        int maxDiff = -1;
+
+        for (int j = 1; j < n; j++) {
+            if (nums[j] > minElement) {
+                maxDiff = Math.max(maxDiff, nums[j] - minElement);
             } else {
-                low = mid + 1;
+                minElement = nums[j];
             }
         }
-        return ans;
+
+        return maxDiff;
     }
-};
+}
