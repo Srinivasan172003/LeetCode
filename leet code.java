@@ -1,17 +1,18 @@
 class Solution {
-    public int maximumDifference(int[] nums) {
+    public int partitionArray(int[] nums, int k) {
+        Arrays.sort(nums);
         int n = nums.length;
-        int minElement = nums[0];
-        int maxDiff = -1;
 
-        for (int j = 1; j < n; j++) {
-            if (nums[j] > minElement) {
-                maxDiff = Math.max(maxDiff, nums[j] - minElement);
-            } else {
-                minElement = nums[j];
+        int minVal = nums[0];
+        int count = 1;
+
+        for (int i = 0; i < n; i++) {
+            if (nums[i] - minVal > k) {
+                count++;
+                minVal = nums[i];
             }
         }
 
-        return maxDiff;
+        return count;
     }
 }
