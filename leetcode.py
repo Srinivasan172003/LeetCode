@@ -1,22 +1,34 @@
 class Solution:
-    def clearStars(self, s: str) -> str:
-        ALPHABET = "abcdefghijklmnopqrstuvwxyz"
-        d = {letter: [] for letter in ALPHABET}
+    def maxDistance(self, s: str, k: int) -> int:
+        NORTH, SOUTH, EAST, WEST = "N", "S", "E", "W"
+        combinations = [
+            (NORTH, EAST),
+            (NORTH, WEST),
+            (SOUTH, EAST),
+            (SOUTH, WEST)
+        ]
 
-        def getSmallestLetter():
-            for letter in ALPHABET:
-                if d[letter]:
-                    return letter
-            # Should always exist a solution!
-            assert False
-
-        deleted_indices = set()
-        for i, char in enumerate(s):
-            if char == "*":
-                smallest_letter = getSmallestLetter()
-                deleted_indices.add(d[smallest_letter].pop())
-                continue
+        res = 0
+        for y_direction, x_direction in combinations:
+            changed = 0
+            dist = 0
+            for direction in s:
+                if direction == y_direction or direction == x_direction:
+                    dist += 1
+                elif changed < k:
+                    changed += 1
+                    dist += 1
+                else:
+                    # Gotta move in an UNWANTED direction, and can't
+                    # change any more directions, so this will HURT current score.
+                    # However, since problems asks for maximum Manhatten distance
+                    # reached at ANY time, not ONLY after going through entire string s,
+                    # we update res here if smaller than current 'dist'.
+                    if res < dist:
+                        res = dist
+                    dist -= 1 
             
-            d[char].append(i)
+            if res < dist:
+                res = dist
         
-        return "".join(char for i, char in enumerate(s) if char != "*" and i not in deleted_indices)
+        return res
