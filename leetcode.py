@@ -1,34 +1,55 @@
 class Solution:
-    def maxDistance(self, s: str, k: int) -> int:
-        NORTH, SOUTH, EAST, WEST = "N", "S", "E", "W"
-        combinations = [
-            (NORTH, EAST),
-            (NORTH, WEST),
-            (SOUTH, EAST),
-            (SOUTH, WEST)
-        ]
+    def longestSubsequenceRepeatedK(self, s: str, k: int) -> str:
+        res = ""
+        d = defaultdict(int)
+        for letter in s:
+            d[letter] += 1
+        # Can only use letters whose frequency is AT LEAST k
+        d = {letter: freq for letter, freq in d.items() if freq >= k}
 
-        res = 0
-        for y_direction, x_direction in combinations:
-            changed = 0
-            dist = 0
-            for direction in s:
-                if direction == y_direction or direction == x_direction:
-                    dist += 1
-                elif changed < k:
-                    changed += 1
-                    dist += 1
-                else:
-                    # Gotta move in an UNWANTED direction, and can't
-                    # change any more directions, so this will HURT current score.
-                    # However, since problems asks for maximum Manhatten distance
-                    # reached at ANY time, not ONLY after going through entire string s,
-                    # we update res here if smaller than current 'dist'.
-                    if res < dist:
-                        res = dist
-                    dist -= 1 
+        def greedy(substring: str) -> bool:
+            N = len(substring)
+            res = 0
+            i = 0
+            substring_letter = substring[i]
+            for index, letter in enumerate(s):
+                if letter == substring_letter:
+                    i += 1
+                    if i == N:
+                        i = 0
+                        res += 1
+                    substring_letter = substring[i]
+
+            # Substring only valid if found at least k occurences
+            return res >= k
+
+        self.res = ""
+        d = {key: freq // k for key, freq in d.items()}
+        def backtrack():
+            if len(d) == 0:
+                return True
+            choices = "".join(key * d[key] for key in d)
+
+            for perm in sorted(map("".join, set(itertools.permutations(choices))), reverse=True):
+                if greedy(perm):
+                    if len(self.res) < len(perm):
+                        self.res = perm
+                    elif len(self.res) == len(perm) and self.res < perm:
+                        self.res = perm
+                    return True
+
+            found_sol = False
+            for key in sorted(d.keys()):
+                d[key] -= 1
+                if d[key] == 0:
+                    del d[key]
+                
+                if backtrack():
+                    found_sol = True
+
+                d[key] = d.get(key, 0) + 1
             
-            if res < dist:
-                res = dist
-        
-        return res
+            return found_sol
+
+        backtrack()
+        return self.res
