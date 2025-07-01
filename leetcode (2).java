@@ -1,26 +1,13 @@
-import java.util.HashMap;
-import java.util.Map;
-
 class Solution {
-    public int findLHS(int[] nums) {
-        Map<Integer, Integer> map = new HashMap<>();
-        int result = 0;
+    public int possibleStringCount(String word) {
+        int count = 0;
 
-        // Count frequencies
-        for (int num : nums) {
-            map.put(num, map.getOrDefault(num, 0) + 1);
-        }
-
-        // Check for harmonious subsequences
-        for (int num : nums) {
-            int minNum = num;
-            int maxNum = num + 1;
-
-            if (map.containsKey(maxNum)) {
-                result = Math.max(result, map.get(minNum) + map.get(maxNum));
+        for (int i = 1; i < word.length(); i++) {
+            if (word.charAt(i) == word.charAt(i - 1)) {
+                count++;
             }
         }
 
-        return result;
+        return count + 1; // +1 for the base case (no long presses)
     }
 }
