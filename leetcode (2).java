@@ -1,17 +1,43 @@
-class Solution {
-    public int findLucky(int[] arr) {
-        int n = arr.length;
-        for (int i = 0; i < n; i++) {
-            int val = arr[i] & 65535; // Lower 16 bits
-            if (val >= 1 && val <= n) {
-                arr[val - 1] += (1 << 16); // Increase high 16 bits
-            }
+class FindSumPairs {
+    private List<Integer> nums1;
+    private List<Integer> nums2;
+    private Map<Integer, Integer> frequencyMap;
+
+    public FindSumPairs(int[] nums1, int[] nums2) {
+        this.nums1 = new ArrayList<>();
+        for (int num : nums1) {
+            this.nums1.add(num);
         }
-        for (int val = n; val >= 1; val--) {
-            if ((arr[val - 1] >> 16) == val) {
-                return val;
-            }
+
+        this.nums2 = new ArrayList<>();
+        for (int num : nums2) {
+            this.nums2.add(num);
         }
-        return -1;
+
+        frequencyMap = new HashMap<>();
+        for (int num : nums2) {
+            frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
+        }
+    }
+
+    public void add(int index, int val) {
+        int oldVal = nums2.get(index);
+        frequencyMap.put(oldVal, frequencyMap.get(oldVal) - 1);
+        if (frequencyMap.get(oldVal) == 0) {
+            frequencyMap.remove(oldVal);
+        }
+
+        int newVal = oldVal + val;
+        nums2.set(index, newVal);
+        frequencyMap.put(newVal, frequencyMap.getOrDefault(newVal, 0) + 1);
+    }
+
+    public int count(int tot) {
+        int count = 0;
+        for (int num : nums1) {
+            int complement = tot - num;
+            count += frequencyMap.getOrDefault(complement, 0);
+        }
+        return count;
     }
 }
