@@ -1,43 +1,38 @@
-class FindSumPairs {
-    private List<Integer> nums1;
-    private List<Integer> nums2;
-    private Map<Integer, Integer> frequencyMap;
+class Solution {
+    public int maxEvents(int[][] events) {
+        int n = events.length;
+        
+        PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
+        Arrays.sort(events, (a, b) -> Integer.compare(a[0], b[0]));
+        int day = events[0][0];
+        int i = 0;
+        int count = 0; // Result number of events attended
 
-    public FindSumPairs(int[] nums1, int[] nums2) {
-        this.nums1 = new ArrayList<>();
-        for (int num : nums1) {
-            this.nums1.add(num);
+        while(!pq.isEmpty() || i < n) {
+
+            if(pq.isEmpty()) {
+                day = events[i][0];
+            }
+
+            // Add all events that start on `day` to the min-heap
+            while(i < n && events[i][0] == day) {
+                pq.add(events[i][1]);
+                i++;
+            }
+
+            if(!pq.isEmpty()) {
+                pq.poll(); // Attend an event on this day
+                count++; // Counting the result
+            }
+
+            day++;
+
+            // Skip events whose end day is less than the current day
+            while(!pq.isEmpty() && pq.peek() < day) {
+                pq.poll();
+            }
         }
 
-        this.nums2 = new ArrayList<>();
-        for (int num : nums2) {
-            this.nums2.add(num);
-        }
-
-        frequencyMap = new HashMap<>();
-        for (int num : nums2) {
-            frequencyMap.put(num, frequencyMap.getOrDefault(num, 0) + 1);
-        }
-    }
-
-    public void add(int index, int val) {
-        int oldVal = nums2.get(index);
-        frequencyMap.put(oldVal, frequencyMap.get(oldVal) - 1);
-        if (frequencyMap.get(oldVal) == 0) {
-            frequencyMap.remove(oldVal);
-        }
-
-        int newVal = oldVal + val;
-        nums2.set(index, newVal);
-        frequencyMap.put(newVal, frequencyMap.getOrDefault(newVal, 0) + 1);
-    }
-
-    public int count(int tot) {
-        int count = 0;
-        for (int num : nums1) {
-            int complement = tot - num;
-            count += frequencyMap.getOrDefault(complement, 0);
-        }
         return count;
     }
 }
