@@ -1,38 +1,30 @@
 class Solution {
-    public int maxEvents(int[][] events) {
-        int n = events.length;
-        
-        PriorityQueue<Integer> pq = new PriorityQueue<Integer>();
-        Arrays.sort(events, (a, b) -> Integer.compare(a[0], b[0]));
-        int day = events[0][0];
-        int i = 0;
-        int count = 0; // Result number of events attended
-
-        while(!pq.isEmpty() || i < n) {
-
-            if(pq.isEmpty()) {
-                day = events[i][0];
-            }
-
-            // Add all events that start on `day` to the min-heap
-            while(i < n && events[i][0] == day) {
-                pq.add(events[i][1]);
-                i++;
-            }
-
-            if(!pq.isEmpty()) {
-                pq.poll(); // Attend an event on this day
-                count++; // Counting the result
-            }
-
-            day++;
-
-            // Skip events whose end day is less than the current day
-            while(!pq.isEmpty() && pq.peek() < day) {
-                pq.poll();
-            }
+    
+    private ListNode reverseLL(ListNode head) {
+        if(head == null || head.next == null) {
+            return head;
         }
 
-        return count;
+        ListNode last = reverseLL(head.next);
+        head.next.next = head;
+        head.next = null;
+        return last;
+    }
+    
+    public int getDecimalValue(ListNode head) {
+        head = reverseLL(head);
+        
+        int result = 0;
+        int power = 0;
+
+        while(head != null) {
+            if(head.val == 1) {
+                result += Math.pow(2, power);
+            }
+            power++;
+            head = head.next;
+        }
+
+        return result;
     }
 }
