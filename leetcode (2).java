@@ -1,45 +1,34 @@
 class Solution {
-    public long minimumDifference(int[] nums) {
-        int N = nums.length; // 3*n
-        int n = N / 3;
-        
-        long[] leftMinSum = new long[N];
-        long[] rightMaxSum = new long[N];
-        
-        // Max heap for left side (to keep n smallest elements)
-        PriorityQueue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b - a);
-        long leftSum = 0;
-        for (int i = 0; i < 2 * n; i++) {
-            maxHeap.offer(nums[i]);
-            leftSum += nums[i];
-            
-            if (maxHeap.size() > n) {
-                leftSum -= maxHeap.poll();
+    public List<String> removeSubfolders(String[] folder) {
+        // Create a set from the folder array
+        Set<String> folderSet = new HashSet<>(Arrays.asList(folder));
+        List<String> result = new ArrayList<>();
+
+        // Iterate over each folder in the array
+        for (String currFolder : folder) {
+            boolean isSubFolder = false;
+            String tempFolder = currFolder;
+
+            // Continue until currFolder is empty
+            while (!currFolder.isEmpty()) {
+                int position = currFolder.lastIndexOf('/');  // Find the last occurrence of '/'
+                if (position == -1) break;  // Exit if there are no more '/' characters
+
+                currFolder = currFolder.substring(0, position);  // Get the parent folder
+
+                // Check if the parent folder exists in the set
+                if (folderSet.contains(currFolder)) {
+                    isSubFolder = true;  // It is a sub-folder
+                    break;
+                }
             }
-            
-            leftMinSum[i] = leftSum;
-        }
-        
-        // Min heap for right side (to keep n largest elements)
-        PriorityQueue<Integer> minHeap = new PriorityQueue<>();
-        long rightSum = 0;
-        for (int i = N - 1; i >= n; i--) {
-            minHeap.offer(nums[i]);
-            rightSum += nums[i];
-            
-            if (minHeap.size() > n) {
-                rightSum -= minHeap.poll();
+
+            // If it's not a sub-folder, add it to the result list
+            if (!isSubFolder) {
+                result.add(tempFolder);
             }
-            
-            rightMaxSum[i] = rightSum;
         }
-        
-        long result = Long.MAX_VALUE;
-        
-        for (int i = n - 1; i <= 2 * n - 1; i++) {
-            result = Math.min(result, leftMinSum[i] - rightMaxSum[i + 1]);
-        }
-        
+
         return result;
     }
 }
